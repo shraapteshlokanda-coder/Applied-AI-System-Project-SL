@@ -2,16 +2,7 @@
 
 ## Project Summary
 
-In this project you will build and explain a small music recommender system.
-
-Your goal is to:
-
-- Represent songs and a user "taste profile" as data
-- Design a scoring rule that turns that data into recommendations
-- Evaluate what your system gets right and wrong
-- Reflect on how this mirrors real world AI recommenders
-
-Replace this paragraph with your own summary of what your version does.
+This version of the music recommender simulates how a simple content-based system can suggest songs by comparing a user’s preferred style to the features of songs in a catalog. It focuses on clear, explainable rules so the recommendations are easy to understand and adjust.
 
 ---
 
@@ -90,38 +81,33 @@ Profile: pop / happy / energy 0.8
 
 ## Experiments You Tried
 
-Use this section to document the experiments you ran. For example:
+I tested the recommender with three different user profiles:
 
-- What happened when you changed the weight on genre from 2.0 to 0.5
-- What happened when you added tempo or valence to the score
-- How did your system behave for different types of users
+- Pop/Happy/High-Energy: the system strongly preferred upbeat pop tracks such as Sunrise City and Gym Hero.
+- Lofi/Chill/Low-Energy: the ranking shifted toward calm acoustic songs such as Midnight Coding and Library Rain.
+- Rock/Intense/High-Energy: the results moved toward high-energy rock tracks like Storm Runner and Firelight Echo.
+
+I also observed that adding valence and acousticness as supporting features helped separate songs that shared the same genre but felt different in mood. This showed that the scoring logic could produce more nuanced recommendations than a genre-only system.
 
 ---
 
 ## Limitations and Risks
 
-Summarize some limitations of your recommender.
+This recommender is intentionally simple, so it has several limitations:
 
-Examples:
+- It only works with a small catalog of songs, so it cannot capture the full diversity of real music libraries.
+- It does not consider lyrics, artist identity, or listening history, which are important in real recommendation systems.
+- It may over-prioritize genre and mood and miss songs that are surprisingly good matches for a user’s taste.
 
-- It only works on a tiny catalog
-- It does not understand lyrics or language
-- It might over favor one genre or mood
-
-You will go deeper on this in your model card.
+These limitations are discussed in more detail in the model card.
 
 ---
 
 ## Reflection
 
-Read and complete `model_card.md`:
+Read and complete [model_card.md](model_card.md) for a fuller explanation of the system.
 
-[**Model Card**](model_card.md)
-
-Write 1 to 2 paragraphs here about what you learned:
-
-- about how recommenders turn data into predictions
-- about where bias or unfairness could show up in systems like this
+This project showed me that recommender systems do not need complicated models to feel useful. Even a simple scoring rule can generate recommendations that seem reasonable when it uses the right features and gives clear explanations. I also learned that bias can appear easily in these systems, especially when the dataset is small or when one feature, such as genre, is weighted too heavily. In real-world apps, that can create filter bubbles and limit the variety of music people discover.
 
 
 
