@@ -17,17 +17,19 @@ Replace this paragraph with your own summary of what your version does.
 
 ## How The System Works
 
-Explain your design in plain language.
+This project uses a simple content-based recommender. It looks at the features attached to each song and compares them with a user profile that describes the kind of music a person likes. In the real world, streaming apps combine many signals such as listens, skips, playlists, and song metadata, but this simulation keeps the idea simple and transparent.
 
-Some prompts to answer:
+Each song is described with attributes such as genre, mood, energy, valence, and acousticness. The user profile stores a favorite genre, a favorite mood, a target energy level, and whether the user prefers acoustic songs. The recommender gives each song a score by rewarding close matches on genre, mood, and energy, while also using valence and acousticness as supporting signals.
 
-- What features does each `Song` use in your system
-  - For example: genre, mood, energy, tempo
-- What information does your `UserProfile` store
-- How does your `Recommender` compute a score for each song
-- How do you choose which songs to recommend
+### Algorithm Recipe
 
-You can include a simple diagram or bullet list if helpful.
+- +2.0 points for a genre match
+- +1.5 points for a mood match
+- +1.5 × energy similarity for closeness to the target energy
+- +0.75 × valence similarity for a positive or calm vibe
+- +0.5 bonus if the user likes acoustic songs and the track is highly acoustic
+
+The songs are then ranked from highest to lowest score, and the top results are shown with an explanation.
 
 ---
 
@@ -68,15 +70,18 @@ You can add more tests in `tests/test_recommender.py`.
 
 ## Sample Recommendation Output
 
-Paste a sample of your recommender's output here as a text block so a reader can see what it produces:
+Example output for a pop/happy/high-energy profile:
 
 ```
-# e.g.:
-# User profile: genre=indie, mood=chill, energy=low
-# Recommendations:
-#   1. ...
-#   2. ...
-#   3. ...
+Loaded songs: 18
+
+Profile: pop / happy / energy 0.8
+- Sunrise City (Neon Echo) — Score: 4.15
+  Reason: genre match (+2.0); mood match (+1.5); energy similarity (+0.42); valence similarity (+0.63)
+- Rooftop Lights (Indigo Parade) — Score: 3.87
+  Reason: mood match (+1.5); energy similarity (+0.42); valence similarity (+0.60)
+- Golden Hour Pulse (Aurora Lane) — Score: 3.44
+  Reason: mood match (+1.5); energy similarity (+0.33); valence similarity (+0.61)
 ```
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or demo video link here -->

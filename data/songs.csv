@@ -9,3 +9,11 @@ id,title,artist,genre,mood,energy,tempo_bpm,valence,danceability,acousticness
 8,Night Drive Loop,Neon Echo,synthwave,moody,0.75,110,0.49,0.73,0.22
 9,Focus Flow,LoRoom,lofi,focused,0.40,80,0.59,0.60,0.78
 10,Rooftop Lights,Indigo Parade,indie pop,happy,0.76,124,0.81,0.82,0.35
+11,Golden Hour Pulse,Aurora Lane,soul,happy,0.71,104,0.88,0.76,0.27
+12,Velvet Static,Pixel Harbor,electronic,moody,0.68,128,0.43,0.74,0.12
+13,Quiet Harbor,Marina Vale,folk,relaxed,0.33,76,0.72,0.51,0.84
+14,Afterglow Drive,Northlight,indie pop,reflective,0.58,100,0.63,0.69,0.41
+15,Neon Skyline,Velvet Circuit,hip hop,focused,0.79,122,0.54,0.81,0.11
+16,Midday Drift,Golden Thread,ambient,relaxed,0.31,66,0.67,0.47,0.95
+17,Firelight Echo,Ember & Co.,rock,energetic,0.87,140,0.51,0.74,0.08
+18,Soft Static,Clara Vale,lofi,calm,0.29,70,0.64,0.57,0.90
