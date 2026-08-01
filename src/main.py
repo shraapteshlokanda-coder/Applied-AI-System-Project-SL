@@ -1,24 +1,29 @@
-"""Command line runner for the music recommender simulation."""
+"""Command line runner for the retrieval-based music assistant."""
 
-from src.recommender import load_songs, recommend_songs
+from pathlib import Path
+
+from src.assistant import MusicAssistant
 
 
 def main() -> None:
-    songs = load_songs("data/songs.csv")
-    print(f"Loaded songs: {len(songs)}")
-
-    sample_profiles = [
-        {"favorite_genre": "pop", "favorite_mood": "happy", "target_energy": 0.8, "likes_acoustic": False},
-        {"favorite_genre": "lofi", "favorite_mood": "chill", "target_energy": 0.4, "likes_acoustic": True},
-        {"favorite_genre": "rock", "favorite_mood": "intense", "target_energy": 0.9, "likes_acoustic": False},
+    assistant = MusicAssistant(Path(__file__).resolve().parents[1] / "data" / "songs.csv")
+    sample_requests = [
+        "I want upbeat pop songs for a happy workout",
+        "I need calm lofi tracks for studying late at night",
+        "Give me something intense and energetic for a run",
     ]
 
-    for profile in sample_profiles:
-        print(f"\nProfile: {profile['favorite_genre']} / {profile['favorite_mood']} / energy {profile['target_energy']}")
-        recommendations = recommend_songs(profile, songs, k=5)
-        for song, score, explanation in recommendations:
-            print(f"- {song['title']} ({song['artist']}) — Score: {score:.2f}")
-            print(f"  Reason: {explanation}")
+    print("Music Assistant Demo")
+    print("=" * 30)
+    for request in sample_requests:
+        response = assistant.respond_to_request(request, k=3)
+        print(f"\nRequest: {request}")
+        print(f"Inferred profile: {response.profile}")
+        print("Assistant answer:")
+        print(response.answer)
+        if response.guardrail_message:
+            print(f"Guardrail: {response.guardrail_message}")
+        print(f"Confidence: {response.confidence:.2f}")
 
 
 if __name__ == "__main__":

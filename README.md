@@ -1,113 +1,110 @@
-# 🎵 Music Recommender Simulation
+# VibeFinder: Retrieval-Based Music Assistant
 
-## Project Summary
+## Original Project and Summary
 
-This version of the music recommender simulates how a simple content-based system can suggest songs by comparing a user’s preferred style to the features of songs in a catalog. It focuses on clear, explainable rules so the recommendations are easy to understand and adjust.
+This project builds on the original VibeFinder music recommender from Modules 1–3. It started as a content-based recommender that scored songs against a user profile, and it now includes a retrieval-based AI assistant that interprets a natural-language request, retrieves relevant songs from the catalog, and explains its suggestions with a confidence score and guardrails.
 
----
+## What the System Does
 
-## How The System Works
+VibeFinder helps a user describe a mood or activity in plain language and then suggests songs that match that intent. The assistant uses a lightweight retrieval step over the song catalog, uses a simple profile inference layer to map the request to genre, mood, energy, and acoustic preferences, and returns a short explanation for each recommendation.
 
-This project uses a simple content-based recommender. It looks at the features attached to each song and compares them with a user profile that describes the kind of music a person likes. In the real world, streaming apps combine many signals such as listens, skips, playlists, and song metadata, but this simulation keeps the idea simple and transparent.
+## Architecture Overview
 
-Each song is described with attributes such as genre, mood, energy, valence, and acousticness. The user profile stores a favorite genre, a favorite mood, a target energy level, and whether the user prefers acoustic songs. The recommender gives each song a score by rewarding close matches on genre, mood, and energy, while also using valence and acousticness as supporting signals.
+The system is organized around four main pieces:
 
-### Algorithm Recipe
+- User input: a free-form request such as “upbeat pop songs for a workout”
+- Music assistant: infers a preference profile and retrieves relevant songs
+- Recommendation scorer: ranks songs from the catalog using the existing recommender logic
+- Guardrails and evaluation: checks empty requests, reports confidence, and supports automated tests
 
-- +2.0 points for a genre match
-- +1.5 points for a mood match
-- +1.5 × energy similarity for closeness to the target energy
-- +0.75 × valence similarity for a positive or calm vibe
-- +0.5 bonus if the user likes acoustic songs and the track is highly acoustic
+The full architecture diagram is in [diagrams/architecture.md](diagrams/architecture.md).
 
-The songs are then ranked from highest to lowest score, and the top results are shown with an explanation.
+## Setup Instructions
 
----
-
-## Getting Started
-
-### Setup
-
-1. Create a virtual environment (optional but recommended):
+1. Create a virtual environment (recommended):
 
    ```bash
    python -m venv .venv
-   source .venv/bin/activate      # Mac or Linux
-   .venv\Scripts\activate         # Windows
+   source .venv/bin/activate
+   ```
 
-2. Install dependencies
+2. Install the dependencies:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. Run the assistant demo:
+
+   ```bash
+   python3 -m src.main
+   ```
+
+4. Run the automated tests:
+
+   ```bash
+   pytest -q
+   ```
+
+## Sample Interactions
+
+### Example 1: upbeat workout request
 
 ```bash
-pip install -r requirements.txt
+python3 -m src.main
 ```
 
-3. Run the app:
-
-```bash
-python -m src.main
+```text
+Request: I want upbeat pop songs for a happy workout
+Inferred profile: {'favorite_genre': 'rock', 'favorite_mood': 'energetic', 'target_energy': 0.9, 'likes_acoustic': False}
+Assistant answer:
+I interpreted your request as a rock / energetic / energy 0.90 vibe.
+- Sunrise City by Neon Echo (pop, happy)
+- Rooftop Lights by Indigo Parade (indie pop, happy)
+- Gym Hero by Max Pulse (pop, intense)
+Confidence: 0.70
 ```
 
-### Running Tests
+### Example 2: calm study request
 
-Run the starter tests with:
-
-```bash
-pytest
+```text
+Request: I need calm lofi tracks for studying late at night
+Inferred profile: {'favorite_genre': 'lofi', 'favorite_mood': 'chill', 'target_energy': 0.35, 'likes_acoustic': True}
+Assistant answer:
+I interpreted your request as a lofi / chill / energy 0.35 vibe.
+- Midnight Coding by LoRoom (lofi, chill)
+- Soft Static by Clara Vale (lofi, calm)
+- Library Rain by Paper Lanterns (lofi, chill)
+Confidence: 0.70
 ```
 
-You can add more tests in `tests/test_recommender.py`.
+### Example 3: empty input guardrail
 
----
-
-## Sample Recommendation Output
-
-Example output for a pop/happy/high-energy profile:
-
-```
-Loaded songs: 18
-
-Profile: pop / happy / energy 0.8
-- Sunrise City (Neon Echo) — Score: 4.15
-  Reason: genre match (+2.0); mood match (+1.5); energy similarity (+0.42); valence similarity (+0.63)
-- Rooftop Lights (Indigo Parade) — Score: 3.87
-  Reason: mood match (+1.5); energy similarity (+0.42); valence similarity (+0.60)
-- Golden Hour Pulse (Aurora Lane) — Score: 3.44
-  Reason: mood match (+1.5); energy similarity (+0.33); valence similarity (+0.61)
+```text
+Request: '   '
+Guardrail: Please share a short description of the mood, activity, or vibe you're looking for so I can suggest songs.
+Confidence: 0.05
 ```
 
-**Screenshot or video** *(optional)*: <!-- Insert a screenshot or demo video link here -->
+## Design Decisions
 
----
+The assistant uses a simple retrieval-first design rather than a full large-language-model pipeline because the goal is to stay reproducible and easy to test. A rule-based profile inference keeps the behavior interpretable, while the existing recommender scoring logic still powers the ranking. The trade-off is that the assistant is intentionally lightweight; it works well for this catalog but would need richer language understanding and larger data for production use.
 
-## Experiments You Tried
+## Testing Summary
 
-I tested the recommender with three different user profiles:
+I verified the project with automated tests and by running the CLI end to end. The suite covers empty-input guardrails and retrieval behavior, and the CLI demo shows the assistant producing different recommendations for different requests. The biggest lesson was that keyword-based retrieval is useful but can be brittle when requests are vague or use unusual phrasing.
 
-- Pop/Happy/High-Energy: the system strongly preferred upbeat pop tracks such as Sunrise City and Gym Hero.
-- Lofi/Chill/Low-Energy: the ranking shifted toward calm acoustic songs such as Midnight Coding and Library Rain.
-- Rock/Intense/High-Energy: the results moved toward high-energy rock tracks like Storm Runner and Firelight Echo.
+## Reliability and Guardrails
 
-I also observed that adding valence and acousticness as supporting features helped separate songs that shared the same genre but felt different in mood. This showed that the scoring logic could produce more nuanced recommendations than a genre-only system.
-
----
-
-## Limitations and Risks
-
-This recommender is intentionally simple, so it has several limitations:
-
-- It only works with a small catalog of songs, so it cannot capture the full diversity of real music libraries.
-- It does not consider lyrics, artist identity, or listening history, which are important in real recommendation systems.
-- It may over-prioritize genre and mood and miss songs that are surprisingly good matches for a user’s taste.
-
-These limitations are discussed in more detail in the model card.
-
----
+| Test case | Expected behavior | Result |
+| --- | --- | --- |
+| Empty request | Return a guardrail message and low confidence | Pass |
+| Upbeat workout request | Retrieve pop/happy songs | Pass |
+| Calm study request | Retrieve chill/lofi songs | Pass |
 
 ## Reflection
 
-Read and complete [model_card.md](model_card.md) for a fuller explanation of the system.
-
-This project showed me that recommender systems do not need complicated models to feel useful. Even a simple scoring rule can generate recommendations that seem reasonable when it uses the right features and gives clear explanations. I also learned that bias can appear easily in these systems, especially when the dataset is small or when one feature, such as genre, is weighted too heavily. In real-world apps, that can create filter bubbles and limit the variety of music people discover.
+This project taught me that AI systems are most valuable when they combine strong domain logic with a clear user experience. The recommender logic provides explainable results, while the assistant layer makes the system easier to interact with. I also learned that reliability matters as much as accuracy, because a small guardrail can prevent confusing or unhelpful outputs.
 
 
 

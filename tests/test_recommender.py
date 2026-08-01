@@ -1,4 +1,5 @@
 from src.recommender import Song, UserProfile, Recommender
+from src.assistant import MusicAssistant
 
 def make_small_recommender() -> Recommender:
     songs = [
@@ -59,3 +60,48 @@ def test_explain_recommendation_returns_non_empty_string():
     explanation = rec.explain_recommendation(user, song)
     assert isinstance(explanation, str)
     assert explanation.strip() != ""
+
+
+def test_assistant_handles_empty_query_gracefully():
+    assistant = MusicAssistant()
+    response = assistant.respond_to_request("   ", [], k=3)
+
+    assert response.guardrail_message is not None
+    assert "Please share" in response.guardrail_message
+    assert response.confidence <= 0.2
+
+
+def test_assistant_retrieves_and_explains_relevant_songs():
+    assistant = MusicAssistant()
+    songs = [
+        {
+            "id": 1,
+            "title": "Sunrise City",
+            "artist": "Neon Echo",
+            "genre": "pop",
+            "mood": "happy",
+            "energy": 0.82,
+            "tempo_bpm": 118,
+            "valence": 0.84,
+            "danceability": 0.79,
+            "acousticness": 0.18,
+        },
+        {
+            "id": 2,
+            "title": "Midnight Coding",
+            "artist": "LoRoom",
+            "genre": "lofi",
+            "mood": "chill",
+            "energy": 0.42,
+            "tempo_bpm": 78,
+            "valence": 0.56,
+            "danceability": 0.62,
+            "acousticness": 0.71,
+        },
+    ]
+
+    response = assistant.respond_to_request("I want upbeat pop songs for a happy workout", songs, k=2)
+
+    assert response.retrieved_songs
+    assert "Sunrise City" in response.answer
+    assert response.confidence >= 0.5

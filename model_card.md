@@ -1,53 +1,37 @@
-# 🎧 Model Card: Music Recommender Simulation
+# 🎧 Model Card: VibeFinder
 
 ## 1. Model Name
 
-VibeFinder 1.0
-
----
+VibeFinder 1.1
 
 ## 2. Intended Use
 
-This recommender is designed for classroom exploration and simple simulations of how music apps suggest songs. It is meant to suggest tracks that match a user’s stated preferences for genre, mood, and energy.
+VibeFinder is intended for classroom-style demonstrations and simple music discovery tasks. It helps users describe a mood or activity in natural language and then retrieve songs that fit that intent.
 
----
+## 3. How the System Works
 
-## 3. How the Model Works
-
-The system compares a song’s genre, mood, energy, valence, and acousticness to a small user profile. It rewards close matches and ranks songs from highest to lowest score. The model is intentionally simple so that each recommendation can be explained in plain language.
-
----
+The assistant first infers a lightweight preference profile from the request, then retrieves songs from a small catalog and ranks them using the existing recommender logic. The result includes a short explanation and a confidence score so the user can understand how the system interpreted the request.
 
 ## 4. Data
 
-The catalog contains 18 songs with a mix of pop, lofi, rock, ambient, jazz, indie, soul, and electronic styles. The dataset includes mood labels and numeric features such as energy, valence, danceability, and acousticness. It is still small, so it cannot capture the full variety of human musical taste.
+The catalog contains 18 songs with labels for genre, mood, energy, valence, danceability, and acousticness. Because the dataset is small and hand-curated, it does not represent the full diversity of real-world music tastes.
 
----
+## 5. Limitations and Bias
 
-## 5. Strengths
+The system can over-weight obvious keywords such as “pop” or “chill,” which may cause it to miss songs that are a good fit but expressed with different language. The catalog is also narrow, so it may reflect a limited set of styles and artists. In practice, the assistant should be treated as a helpful prototype rather than a complete music recommendation engine.
 
-The recommender works well for clear profiles such as “happy pop” or “chill lofi.” It is especially good at explaining why a song was chosen, because each score is built from understandable features.
+## 6. Misuse and Safeguards
 
----
+This system could be misused to over-personalize or reinforce narrow taste bubbles, especially if it is used without human review. To reduce that risk, the app includes guardrails for empty input, exposes confidence scores, and keeps the recommendations explainable rather than opaque. A human reviewer should still check whether the suggestions feel appropriate before treating them as final.
 
-## 6. Limitations and Bias
+## 7. Reliability Observations
 
-The system can over-prioritize genre and mood and may miss good songs that are outside those exact labels. Because the catalog is small and hand-curated, it may also reflect a narrow set of artists and styles. A user who likes unusual combinations of moods or genres may get less satisfying results.
+The system performed well for clearly phrased requests such as “upbeat workout” and “calm study,” but it was less reliable when the input was vague or contained conflicting signals. One surprise during testing was that the assistant sometimes made a reasonable recommendation even when the exact keywords did not appear in the song metadata, simply because the inferred profile was strong enough.
 
----
+## 8. Collaboration with AI
 
-## 7. Evaluation
+I used AI assistance throughout the project to speed up implementation and testing, especially for the CLI integration and documentation. One helpful suggestion was to structure the assistant around a retrieval step plus a clear confidence score, which made the system easier to explain. One flawed suggestion was to rely too heavily on keyword overlap alone for matching; that would have been brittle, so I corrected it by combining retrieval with the existing scoring logic.
 
-I tested the recommender with three example profiles: pop/happy/high energy, lofi/chill/low energy, and rock/intense/high energy. The results changed in sensible ways, with upbeat songs rising for energetic profiles and calmer acoustic songs rising for chill profiles. One surprise was that energy and valence had a noticeable impact even when the genre or mood did not fully match.
+## 9. Reflection
 
----
-
-## 8. Future Work
-
-I would add more songs and more diverse genres, include listening history as a feature, and improve the scoring so it can handle mixed tastes more gracefully. I would also like to add more explanation detail so users can understand why one song was ranked above another.
-
----
-
-## 9. Personal Reflection
-
-This project made me realize that even a simple recommender can feel surprisingly useful when the features are chosen well. Using AI tools helped me move quickly, but I still had to verify the logic and make sure the recommendations matched the intended behavior rather than just the code output.
+This project showed me that AI systems are most dependable when they combine model behavior with explicit guardrails and human review. I learned that transparency, evaluation, and careful prompt design matter just as much as model choice.
